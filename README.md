@@ -41,8 +41,6 @@ source env/bin/activate
 pip install -r requirements.txt
 ```
 
-````
-
 ## Usage
 
 To run the script, use the following command in your terminal:
@@ -82,4 +80,3 @@ To save the output to a file:
 
 4. **Output Formatting**:
    - Information is formatted in a readable manner using the `prettytable` library, and color-coded output is provided using `colorama`.
-````
