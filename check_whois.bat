@@ -1,13 +1,13 @@
 @echo off
-setlocal
+setlocal EnableExtensions
 
 :: Function to check for required commands
 call :check_dependencies
 
 :: Check for a valid argument (domain name)
 if "%~1"=="" (
-        echo Usage: %~nx0 ^<domain^>
-        exit /b 1
+    echo Usage: %~nx0 ^<domain^>
+    exit /b 1
 )
 
 set "domain=%~1"
@@ -27,7 +27,7 @@ echo [5] All Information
 echo [6] Exit
 echo [7] Help
 echo ========================================
-set /p choice=Enter choice [1-7]:
+set /p choice=Enter choice [1-7]: 
 
 if "%choice%"=="1" call :get_whois_info %domain%
 if "%choice%"=="2" call :get_dns_info %domain%
@@ -36,17 +36,16 @@ if "%choice%"=="4" call :get_ssl_certificate %domain%
 if "%choice%"=="5" call :gather_all_info %domain%
 if "%choice%"=="6" goto :confirm_exit
 if "%choice%"=="7" goto :help
-
 goto :menu
 
 :: Function to check dependencies
 :check_dependencies
 for %%C in (whois nslookup openssl) do (
-        where %%C >nul 2>nul
-        if errorlevel 1 (
-                echo Error: Required command %%C not found.
-                exit /b 1
-        )
+    where %%C >nul 2>nul
+    if errorlevel 1 (
+        echo Error: Required command %%C not found.
+        exit /b 1
+    )
 )
 exit /b
 
@@ -123,28 +122,28 @@ echo ========================================
 echo Help - Understanding the Menu Options
 echo ========================================
 echo [1] WHOIS Information:
-echo     Retrieves the WHOIS information for the domain, which includes 
-echo     domain registration details, owner contact information, and 
+echo     Retrieves the WHOIS information for the domain, which includes
+echo     domain registration details, owner contact information, and
 echo     other administrative data.
 echo.
 echo [2] DNS Information:
-echo     Retrieves DNS records (A, AAAA, MX, NS, TXT) for the domain, 
-echo     which are used to map domain names to IP addresses, mail 
+echo     Retrieves DNS records (A, AAAA, MX, NS, TXT) for the domain,
+echo     which are used to map domain names to IP addresses, mail
 echo     server details, and other domain-specific settings.
 echo.
 echo [3] IP Address:
 echo     Displays the IP address associated with the domain.
 echo.
 echo [4] SSL Certificate:
-echo     Retrieves and displays the SSL certificate details for the 
+echo     Retrieves and displays the SSL certificate details for the
 echo     domain, including its validity, issuer, and expiration date.
 echo.
 echo [5] All Information:
-echo     Gathers and displays all of the above information (WHOIS, 
+echo     Gathers and displays all of the above information (WHOIS,
 echo     DNS, IP Address, SSL Certificate) in a single view.
 echo.
 echo [6] Exit:
-echo     Allows you to exit the application. A confirmation prompt will 
+echo     Allows you to exit the application. A confirmation prompt will
 echo     be shown before exiting.
 echo.
 echo [7] Help:
