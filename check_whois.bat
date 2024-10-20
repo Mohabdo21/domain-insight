@@ -4,13 +4,21 @@ setlocal EnableExtensions
 :: Function to check for required commands
 call :check_dependencies
 
-:: Check for a valid argument (domain name)
+:: Check if domain argument is provided and valid
 if "%~1"=="" (
+    echo Error: Domain name is required.
     echo Usage: %~nx0 ^<domain^>
     exit /b 1
 )
 
 set "domain=%~1"
+
+:: Validate domain format (basic check for a dot in the domain)
+echo %domain% | findstr /r "[a-zA-Z0-9][-a-zA-Z0-9]*\.[a-zA-Z][-a-zA-Z]*" >nul
+if errorlevel 1 (
+    echo Error: Invalid domain format. Please provide a valid domain.
+    exit /b 1
+)
 
 :: Main loop for the menu
 :menu
@@ -27,7 +35,19 @@ echo [5] All Information
 echo [6] Exit
 echo [7] Help
 echo ========================================
-set /p choice=Enter choice [1-7]: 
+set /p choice=Enter choice [1-7]:
+
+:: Validate user choice
+if not defined choice (
+    echo Error: No input provided. Please select an option between 1 and 7.
+    pause
+    goto :menu
+)
+if "%choice%" lss "1" if "%choice%" gtr "7" (
+    echo Error: Invalid choice. Please enter a number between 1 and 7.
+    pause
+    goto :menu
+)
 
 if "%choice%"=="1" call :get_whois_info %domain%
 if "%choice%"=="2" call :get_dns_info %domain%
@@ -43,7 +63,7 @@ goto :menu
 for %%C in (whois nslookup openssl) do (
     where %%C >nul 2>nul
     if errorlevel 1 (
-        echo Error: Required command %%C not found.
+        echo Error: Required command %%C not found. Please install it and try again.
         exit /b 1
     )
 )
@@ -57,7 +77,7 @@ echo WHOIS Information for %1:
 echo ========================================
 whois %1
 if errorlevel 1 (
-    echo Error retrieving WHOIS information for %1.
+    echo Error: Failed to retrieve WHOIS information for %1. Check your network or domain validity.
 ) else (
     echo WHOIS information retrieved successfully.
 )
@@ -72,7 +92,12 @@ echo DNS Information for %1:
 echo ========================================
 for %%R in (A AAAA MX NS TXT) do (
     echo %%R Records:
-    nslookup -type=%%R %1
+    nslookup -type=%%R %1 >nul 2>nul
+    if errorlevel 1 (
+        echo Error: Failed to retrieve %%R records for %1.
+    ) else (
+        nslookup -type=%%R %1
+    )
 )
 pause
 goto :menu
@@ -83,7 +108,12 @@ cls
 echo ========================================
 echo IP Address for %1:
 echo ========================================
-nslookup %1 | findstr /i "Address:"
+nslookup %1 | findstr /i "Address:" >nul 2>nul
+if errorlevel 1 (
+    echo Error: Failed to retrieve IP address for %1.
+) else (
+    nslookup %1 | findstr /i "Address:"
+)
 pause
 goto :menu
 
@@ -93,11 +123,11 @@ cls
 echo ========================================
 echo SSL Certificate for %1:
 echo ========================================
-openssl s_client -connect %1:443 -servername %1 2>nul | openssl x509 -text -noout
+openssl s_client -connect %1:443 -servername %1 2>nul | openssl x509 -text -noout >nul
 if errorlevel 1 (
-    echo Error retrieving SSL certificate for %1.
+    echo Error: Failed to retrieve SSL certificate for %1. Check if SSL is configured correctly.
 ) else (
-    echo SSL certificate retrieved successfully.
+    openssl s_client -connect %1:443 -servername %1 2>nul | openssl x509 -text -noout
 )
 pause
 goto :menu
@@ -122,32 +152,25 @@ echo ========================================
 echo Help - Understanding the Menu Options
 echo ========================================
 echo [1] WHOIS Information:
-echo     Retrieves the WHOIS information for the domain, which includes
-echo     domain registration details, owner contact information, and
-echo     other administrative data.
+echo     Retrieves domain registration and administrative data.
 echo.
 echo [2] DNS Information:
-echo     Retrieves DNS records (A, AAAA, MX, NS, TXT) for the domain,
-echo     which are used to map domain names to IP addresses, mail
-echo     server details, and other domain-specific settings.
+echo     Retrieves DNS records (A, AAAA, MX, NS, TXT) for the domain.
 echo.
 echo [3] IP Address:
 echo     Displays the IP address associated with the domain.
 echo.
 echo [4] SSL Certificate:
-echo     Retrieves and displays the SSL certificate details for the
-echo     domain, including its validity, issuer, and expiration date.
+echo     Retrieves and displays SSL certificate details for the domain.
 echo.
 echo [5] All Information:
-echo     Gathers and displays all of the above information (WHOIS,
-echo     DNS, IP Address, SSL Certificate) in a single view.
+echo     Gathers and displays all of the above information in one go.
 echo.
 echo [6] Exit:
-echo     Allows you to exit the application. A confirmation prompt will
-echo     be shown before exiting.
+echo     Exits the application after a confirmation prompt.
 echo.
 echo [7] Help:
-echo     Displays this help menu with explanations for each option.
+echo     Displays this help menu.
 echo ========================================
 pause
 goto :menu
@@ -157,6 +180,8 @@ goto :menu
 set /p "confirm=Are you sure you want to exit? [Y/N]: "
 if /i "%confirm%"=="Y" goto :exit
 if /i "%confirm%"=="N" goto :menu
+echo Invalid choice. Please enter Y or N.
+pause
 goto :menu
 
 :exit

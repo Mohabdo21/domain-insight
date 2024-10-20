@@ -3,10 +3,10 @@
 # Function to check for required commands
 check_dependencies() {
 	for cmd in whois dig getent openssl; do
-		command -v "$cmd" >/dev/null 2>&1 || {
-			echo "Error: $cmd is not installed. Please install it to use this script."
+		if ! command -v "$cmd" >/dev/null 2>&1; then
+			echo "Error: '$cmd' is not installed. Please install it to use this script."
 			exit 1
-		}
+		fi
 	done
 }
 
@@ -40,8 +40,14 @@ get_dns_info() {
 	echo -e "\nDNS Information for $1:\n"
 	for record in A AAAA MX NS TXT; do
 		echo -e "$record Records:"
-		if ! dig "$1" "$record" +short; then
-			echo "Error retrieving $record records."
+		if output=$(dig "$1" "$record" +short); then
+			if [[ -z "$output" ]]; then
+				echo "No $record records found."
+			else
+				echo "$output"
+			fi
+		else
+			echo "Error retrieving $record records for $1."
 		fi
 		echo
 	done
@@ -51,7 +57,11 @@ get_dns_info() {
 get_ip_address() {
 	echo -e "\nIP Address for $1:"
 	if ip=$(getent hosts "$1" | awk '{ print $1 }'); then
-		echo "$ip"
+		if [[ -z "$ip" ]]; then
+			echo "No IP address found for $1."
+		else
+			echo "$ip"
+		fi
 	else
 		echo "Error retrieving IP address for $1."
 	fi
@@ -77,9 +87,18 @@ gather_all_info() {
 
 # Function to confirm exit
 confirm_exit() {
-	read -r -p "Are you sure you want to exit? (Y/n): " confirmation
-	[[ -z "$confirmation" || "$confirmation" =~ ^[Yy]$ ]]
+	while true; do
+		read -r -p "Are you sure you want to exit? (Y/n): " confirmation
+		case "$confirmation" in
+		[Yy]*) return 0 ;; # Yes: exit
+		[Nn]*) return 1 ;; # No: continue
+		*) echo "Invalid input. Please enter Y or N." ;;
+		esac
+	done
 }
+
+# Trap to handle Ctrl+C (SIGINT) gracefully
+trap "echo -e '\nScript interrupted. Exiting...'; exit 1" SIGINT
 
 # Check for required argument
 if [[ $# -lt 1 ]]; then
@@ -90,7 +109,7 @@ fi
 domain="$1"
 
 # Validate domain format using a regex
-if ! [[ "$domain" =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+if ! [[ "$domain" =~ ^([a-zA-Z0-9]([-a-zA-Z0-9]*[a-zA-Z0-9])?\.)+[a-zA-Z]{2,}$ ]]; then
 	echo "Error: Invalid domain format. Please provide a valid domain (e.g., example.com)."
 	exit 1
 fi
@@ -102,6 +121,12 @@ check_dependencies
 while true; do
 	display_menu "$domain"
 	read -r -p "Enter your choice (1-6): " choice
+
+	# Ensure valid numeric input between 1-6
+	if ! [[ "$choice" =~ ^[1-6]$ ]]; then
+		echo "Invalid choice, please enter a valid option (1-6)."
+		continue
+	fi
 
 	case "$choice" in
 	1) get_whois_info "$domain" ;;
@@ -115,6 +140,5 @@ while true; do
 			exit 0
 		fi
 		;;
-	*) echo "Invalid choice, please enter a valid option (1-6)." ;;
 	esac
 done
