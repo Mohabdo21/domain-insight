@@ -1,5 +1,6 @@
 @echo off
 setlocal EnableExtensions
+title Domain Information Tool
 
 :: Function to check for required commands
 call :check_dependencies
