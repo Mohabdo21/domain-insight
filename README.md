@@ -1,153 +1,121 @@
-# Check WHOIS Script
+# 🕵️ Check WHOIS Script
 
-## Overview
+## 🚀 Overview
 
-The `check_whois.py`, `check_whois.sh`, and `check_whois.bat` scripts are command-line tools designed to retrieve and display various information about a specified domain. They provide users with insights into WHOIS data, DNS records, IP addresses, and SSL certificate details. These scripts can be particularly useful for web administrators, security professionals, or anyone interested in obtaining detailed domain information.
+The `check_whois.py`, `check_whois.sh`, and `check_whois.bat` scripts are robust command-line tools designed to retrieve **comprehensive information** about a domain. Whether you're a web admin, security enthusiast, or simply curious, these scripts provide insights into **WHOIS data**, **DNS records**, **IP addresses**, and **SSL certificate details**. Choose the tool that fits your workflow—be it Python, Bash, or Windows Batch!
 
-## Purpose
+## 🎯 Purpose
 
-The primary purpose of these scripts is to allow users to gather comprehensive information about a domain, which can assist in tasks such as troubleshooting, security assessments, and domain management.
+Easily gather detailed domain information with these scripts. Whether troubleshooting, conducting security assessments, or managing domains, this suite equips you with the tools to get the job done **quickly and efficiently**.
 
-## Features
+## ✨ Features
 
-- **Python Script (`check_whois.py`)**:
+### **Python Script (`check_whois.py`)**:
 
-  - Retrieve WHOIS information of a domain.
-  - Display DNS records (A, AAAA, MX, NS, TXT).
-  - Obtain the IP address associated with the domain.
-  - Fetch SSL certificate details.
-  - Output options for displaying information directly in the terminal or saving it to a file.
+- 🔍 Retrieve WHOIS details of any domain.
+- 🌐 Display DNS records: A, AAAA, MX, NS, TXT.
+- 🖥️ Fetch associated IP addresses.
+- 🔐 Retrieve SSL certificate information.
+- 📂 Flexible output options: view in terminal or save to a file.
 
-- **Bash Script (`check_whois.sh`)**:
+### **Bash Script (`check_whois.sh`)**:
 
-  - Interactive menu for selecting information retrieval.
-  - Confirm exit before terminating the script.
-  - Provides a command-line interface for users familiar with shell scripting.
+- 🛠️ Interactive menu for streamlined info retrieval.
+- ⛔ Exit confirmation for safe termination.
+- 💻 Suitable for shell scripting pros.
 
-- **Batch Script (`check_whois.bat`)** (for Windows):
-  - Interactive menu for retrieving domain information.
-  - Supports WHOIS, DNS, IP Address, and SSL Certificate retrieval.
-  - Verifies that required commands (`whois`, `nslookup`, and `openssl`) are available in the system path.
+### **Batch Script (`check_whois.bat`)** (Windows):
 
-## Windows Setup (WHOIS and OpenSSL)
+- 🖱️ Interactive Windows-style menu.
+- ✅ Supports WHOIS, DNS, IP Address, and SSL retrieval.
+- 🔗 Ensures required tools (`whois`, `nslookup`, `openssl`) are in your system path.
 
-If you're using Windows, you'll need to ensure that both WHOIS and OpenSSL are properly configured in your system path. Here's how to set them up:
+## 🖥️ Setup on Windows (WHOIS and OpenSSL)
 
-### Setup WHOIS for Windows:
+### 📦 Setting Up WHOIS:
 
-1. Download the WHOIS binaries from the [Microsoft Sysinternals website](https://learn.microsoft.com/en-us/sysinternals/downloads/whois).
-2. Extract the compressed file, and copy the `whois64.exe` file to a directory of your choice.
-3. Add the directory path to your system's environment variables:
-   - Launch "Control Panel".
-   - Go to "System" > "Advanced system settings".
-   - Switch to the "Advanced" tab.
-   - Click on "Environment variables".
-   - Under "System Variables", locate `Path` and select "Edit".
-   - Add the directory path where `whois64.exe` is located and save the changes.
+1. Download the WHOIS tool from [Microsoft Sysinternals](https://learn.microsoft.com/en-us/sysinternals/downloads/whois).
+2. Extract and place `whois64.exe` in a directory of your choice.
+3. Add this directory to your system's environment `Path` variables.
 
-### Setup OpenSSL for Windows:
+### 🔒 Setting Up OpenSSL:
 
-While a secure resource for downloading OpenSSL binaries directly is not readily available, you can use the OpenSSL binary included with Git for Windows:
+OpenSSL binaries are included with **Git for Windows**. Locate it in `C:\Program Files\Git\usr\bin\openssl.exe` and add this path to your system environment variables.
 
-1. If you have Git installed, the OpenSSL binary is located in `C:\Program Files\Git\usr\bin\openssl.exe`.
-2. Add this path to your system's environment variables, just like with the WHOIS binary:
-   - Launch "Control Panel".
-   - Go to "System" > "Advanced system settings".
-   - Switch to the "Advanced" tab.
-   - Click on "Environment variables".
-   - Under "System Variables", locate `Path` and select "Edit".
-   - Add the directory path where `openssl.exe` is located and save the changes.
+## 📦 Installation
 
-## Installation
+### Python Script:
 
-To use the Python script, ensure you have Python 3 installed on your system. Additionally, you will need to install the required libraries. You can do this by running the following command:
+Ensure you have **Python 3** installed. Install the necessary libraries with:
 
 ```bash
-# Create a virtual environment (optional)
+# Optionally create a virtual environment
 python3 -m venv .venv
-source env/bin/activate
-# Install the required libraries
+source .venv/bin/activate
+# Install dependencies
 pip install -r requirements.txt
 ```
 
-For the Bash script, no additional installation is necessary, but ensure that the required command-line tools are installed (`whois`, `dig`, `getent`, and `openssl`).
+For **Bash**, ensure you have `whois`, `dig`, `getent`, and `openssl` installed.
 
-## Usage
+## 🛠️ Usage
 
 ### Python Script
-
-To run the Python script, use the following command in your terminal:
 
 ```bash
 ./check_whois.py <domain> [--output-to-file]
 ```
 
-#### Parameters
+#### Parameters:
 
-- `<domain>`: The domain name you want to check (e.g., example.com).
-- `--output-to-file`: Optional flag that, when included, saves the output to a file named `domain_info.txt`.
+- `<domain>`: Domain name to retrieve information for (e.g., example.com).
+- `--output-to-file`: Optional flag to save the result to `domain_info.txt`.
 
-#### Example
+#### Example:
 
 ```bash
 ./check_whois.py example.com
-```
-
-To save the output to a file:
-
-```bash
 ./check_whois.py example.com --output-to-file
 ```
 
-### Bash Script
-
-To run the Bash script, use the following command:
+### Bash Script:
 
 ```bash
 ./check_whois.sh <domain>
 ```
 
-#### Example
+#### Example:
 
 ```bash
 ./check_whois.sh example.com
 ```
 
-### Batch Script (Windows)
-
-To run the Batch script on Windows, use the following command:
+### Windows Batch Script:
 
 ```cmd
 check_whois.bat <domain>
 ```
 
-#### Example
+#### Example:
 
 ```cmd
 check_whois.bat example.com
 ```
 
-## How It Works
+## ⚙️ How It Works
 
-1. **DomainInfo Class** (Python Script):
+### Python Script:
 
-   - The script defines a `DomainInfo` class that initializes with a domain name and contains methods to retrieve WHOIS data, DNS records, the IP address, and SSL certificate details.
+- **DomainInfo Class**: Handles WHOIS, DNS, IP, and SSL retrieval.
+- **Menu Class**: An interactive interface guiding the user through options.
+- **Main Loop**: Accepts a domain as input, processes requests, and outputs results.
 
-2. **Menu Class** (Python Script):
+Formatted with the `prettytable` library for readability and styled using `colorama` for colored output.
 
-   - The `Menu` class provides a user interface to interact with the script. It displays a menu of options for users to choose what information they wish to retrieve and handles user input.
+### Bash and Batch Scripts:
 
-3. **Main Loop** (Both Scripts):
+Both scripts feature an **interactive menu** for retrieving specific domain info and prompt for confirmation before exiting.
 
-   - When executed, the scripts check for the required domain argument (for Python), create instances of the necessary classes (for Python), and enter a loop allowing the user to select options until they choose to exit.
+## 📋 Conclusion
 
-4. **Output Formatting** (Python Script):
-
-   - Information is formatted in a readable manner using the `prettytable` library, and color-coded output is provided using `colorama`.
-
-5. **Interactive Interface** (Bash and Batch Scripts):
-   - The Bash and Batch scripts provide an interactive menu for users to select the type of information they wish to retrieve about the specified domain. It also confirms user intentions before exiting.
-
-## Conclusion
-
-All three scripts serve the same purpose but cater to different user preferences: one for those who prefer a Python environment, another for users comfortable with shell scripting, and the Batch script for Windows users. Users can choose the tool that best fits their workflow.
+Choose your weapon—Python, Bash, or Windows Batch! These scripts provide versatile tools for retrieving essential domain data, tailored for different environments. Whether you prefer the versatility of Python, the power of Bash, or the familiarity of Windows, these scripts have you covered.
