@@ -1,22 +1,24 @@
 #!/usr/bin/env python3
 
-import os
+"""Check WHOIS and DNS information for a domain."""
+
 import re
 import socket
 import ssl
 import sys
 
 import dns.resolver
+import whois
 from colorama import Fore, Style, init
 from prettytable import PrettyTable
-
-import whois
 
 # Initialize colorama
 init(autoreset=True)
 
 
 class DomainInfo:
+    """Class to handle domain information retrieval."""
+
     def __init__(self, domain):
         self.domain = domain
 
@@ -82,6 +84,8 @@ class DomainInfo:
 
 
 class Menu:
+    """Class to handle the menu and user interaction."""
+
     def __init__(self, domain_info, output_to_file=False, file_name="domain_info.txt"):
         self.domain_info = domain_info
         self.output_to_file = output_to_file
